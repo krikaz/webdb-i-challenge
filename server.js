@@ -48,7 +48,7 @@ server.post('/accounts', async (req, res) => {
 	res.json(arrayIds[0]);
 });
 
-app.put('/accounts/:id', async (req, res) => {
+server.put('/accounts/:id', async (req, res) => {
 	const { name, budget } = req.body;
 	const result = await updateAccountById(req.params.id, { name, budget });
 	res.json(result);
