@@ -26,6 +26,8 @@ function updateAccountById(id, { name, budget }) {
 		.update({ name, budget });
 }
 
+// ENDPOINTS
+
 server.use(express.json());
 
 server.get('/accounts', async (req, res) => {
@@ -43,15 +45,36 @@ server.delete('/accounts/:id', async (req, res) => {
 	res.json(result);
 });
 
-server.post('/accounts', async (req, res) => {
-	const arrayIds = await createNewAccount(req.body);
-	res.json(arrayIds[0]);
+server.post('/accounts', validateAccount, async (req, res) => {
+	try {
+		const arrayIds = await createNewAccount(req.body);
+		res.status(201).json(arrayIds[0]);
+	} catch (error) {
+		res.status(500).json({
+			error: 'There was an error while saving the account to the database',
+		});
+	}
 });
 
-server.put('/accounts/:id', async (req, res) => {
+server.put('/accounts/:id', validateAccount, async (req, res) => {
 	const { name, budget } = req.body;
 	const result = await updateAccountById(req.params.id, { name, budget });
 	res.json(result);
 });
+
+// MIDDLEWARE
+
+async function validateAccount(req, res, next) {
+	const { name, budget } = req.body;
+	if (typeof name === 'string') {
+		if (typeof budget === 'number') {
+			next();
+		} else {
+			res.status(400).json({ message: 'budget is not a number' });
+		}
+	} else {
+		res.status(400).json({ message: 'name is not a string' });
+	}
+}
 
 module.exports = server;
