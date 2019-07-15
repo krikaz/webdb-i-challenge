@@ -6,8 +6,8 @@ function getAllAccounts() {
 	return db('accounts');
 }
 
-function createNewAccount() {
-  return db('users').insert({ name, budget });
+function createNewAccount({ name, budget }) {
+	return db('accounts').insert({ name, budget });
 }
 
 server.use(express.json());
@@ -17,7 +17,7 @@ server.get('/accounts', async (req, res) => {
 	res.json(result);
 });
 
-app.post('/users', async (req, res) => {
+server.post('/accounts', async (req, res) => {
 	const arrayIds = await createNewAccount(req.body);
 	res.json(arrayIds[0]);
 });
