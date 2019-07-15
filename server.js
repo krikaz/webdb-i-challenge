@@ -57,9 +57,15 @@ server.post('/accounts', validateAccount, async (req, res) => {
 });
 
 server.put('/accounts/:id', validateAccount, async (req, res) => {
-	const { name, budget } = req.body;
-	const result = await updateAccountById(req.params.id, { name, budget });
-	res.json(result);
+	try {
+		const { name, budget } = req.body;
+		const result = await updateAccountById(req.params.id, { name, budget });
+		res.status(201).json(result);
+	} catch (error) {
+		res.status(500).json({
+			error: 'There was an error while updating the account to the database',
+		});
+	}
 });
 
 // MIDDLEWARE
